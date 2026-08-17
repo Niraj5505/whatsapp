@@ -8,6 +8,7 @@
     "server:dev": "npm --prefix server run dev",
     "client:dev": "npm --prefix client run dev",
     "server:start": "npm --prefix server start",
+    "seed": "npm --prefix server run seed",
     "build": "npm --prefix client install && npm --prefix client run build",
     "build:client": "npm --prefix client run build"
   },
