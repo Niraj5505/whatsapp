@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    password: {
+      type: String,
+      default: '',
+    },
     passwordHash: {
       type: String,
       required: [true, 'Password hash is required'],
@@ -37,16 +41,14 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Virtual to accept plain password and set passwordHash
-userSchema.virtual('password').set(function (password) {
-  this._plainPassword = password;
-});
-
-// Hash password before saving if plain password was provided
+// Hash password before saving if password field is provided/modified
 userSchema.pre('save', async function (next) {
-  if (this._plainPassword) {
+  if (this.isModified('password') && this.password) {
     const salt = await bcrypt.genSalt(10);
-    this.passwordHash = await bcrypt.hash(this._plainPassword, salt);
+    this.passwordHash = await bcrypt.hash(this.password, salt);
+  } else if (!this.passwordHash && this.password) {
+    const salt = await bcrypt.genSalt(10);
+    this.passwordHash = await bcrypt.hash(this.password, salt);
   }
   next();
 });

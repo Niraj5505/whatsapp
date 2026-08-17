@@ -51,6 +51,7 @@ async function seedDatabase() {
     const user = await User.create({
       name: 'Niraj Thanki',
       email: 'admin@nexaflow.io',
+      password: 'Password123!',
       passwordHash,
       role: 'superadmin',
     });
