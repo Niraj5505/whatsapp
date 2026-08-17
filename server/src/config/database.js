@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dns = require('dns');
 
-// Configure public DNS servers for resolving MongoDB Atlas SRV records on Windows
+// Configure public DNS servers for resolving MongoDB Atlas SRV records
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 } catch (e) {
@@ -9,8 +9,15 @@ try {
 }
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const mongoUri =
+      process.env.MONGODB_URI ||
+      'mongodb+srv://nirajth:Niraj%40123@cluster0.la5bw0i.mongodb.net/Whatsapp?retryWrites=true&w=majority&appName=Whatsapp';
+
+    const conn = await mongoose.connect(mongoUri, {
       autoIndex: true,
       serverSelectionTimeoutMS: 10000,
     });
@@ -18,7 +25,10 @@ const connectDB = async () => {
     return conn;
   } catch (error) {
     console.error(`[DATABASE] Connection error: ${error.message}`);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
