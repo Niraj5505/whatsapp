@@ -20,8 +20,13 @@ const connectDB = require('../server/src/config/database');
 module.exports = async (req, res) => {
   try {
     await connectDB();
+    return app(req, res);
   } catch (err) {
-    console.error('Serverless DB connection error:', err);
+    console.error('Serverless Execution Error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Serverless Execution Error',
+      error: err.message,
+    });
   }
-  return app(req, res);
 };

@@ -21,6 +21,9 @@ const { apiLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
+// Enable trust proxy for Vercel serverless reverse proxy
+app.set('trust proxy', 1);
+
 // Security & utility middlewares
 app.use(helmet({
   crossOriginResourcePolicy: false,
